@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>PUZZLE44 - Leonidas Name</title>
+    
+    <style>
+        :root {
+            --color-fondo-app: #F36C21;
+            --fuente-global: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --color-primario: #F36C21; 
+        }
+
+        body, html { 
+            margin: 0; padding: 0; height: 100dvh; width: 100%; 
+            overflow: hidden; font-family: var(--fuente-global); 
+            background-color: var(--color-fondo-app); 
+        }
+
+        .pantalla { 
+            width: 100%; height: 100dvh; display: flex; 
+            flex-direction: column; align-items: center; position: absolute;
+            background-color: var(--color-fondo-app); box-sizing: border-box;
+            background-size: contain; background-position: center; background-repeat: no-repeat;
+        }
+
+        #pantalla-carga { background-image: url('fondo.jpeg'); justify-content: flex-start; }
+        #pantalla-menu { background-image: url('fondo 2.jpeg'); }
+
+        .texto-carga-inferior {
+            font-size: 1.1rem; font-weight: bold; color: white;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            animation: blink 1.5s infinite;
+            position: absolute; top: 66.6%; transform: translateY(-50%);
+        }
+        @keyframes blink { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+        .cabecera-titulo {
+            width: 100%; background-color: var(--color-fondo-app);
+            padding: env(safe-area-inset-top, 10px) 0 10px 0; 
+            text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 10;
+        }
+
+        .texto-sombra {
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.9);
+            font-weight: 800; color: white; margin: 0; font-size: 1.8rem;
+        }
+
+        .instrucciones-juego {
+            color: white; text-align: center; width: 90%;
+            margin: 8px 0; font-size: 0.85rem; line-height: 1.3;
+        }
+
+        .area-juego {
+            flex: 1; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; width: 100%; 
+            padding-bottom: 120px;
+        }
+
+        #contenedor-puzzle {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2px;
+            width: 90vw;
+            max-width: 340px;
+            aspect-ratio: 1 / 1;
+            background: rgba(255,255,255,0.3);
+            border: 3px solid white;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .pieza {
+            width: 100%; height: 100%;
+            background-size: 400% 400%;
+            cursor: pointer;
+            border: 0.5px solid rgba(255,255,255,0.1);
+            box-sizing: border-box;
+        }
+
+        .pieza.vacia { background: transparent !important; cursor: default; border: none; }
+
+        #guia-imagen {
+            position: absolute; width: 100%; height: 100%;
+            top: 0; left: 0; background-size: cover; z-index: 100;
+            display: none; border-radius: 10px; pointer-events: none;
+        }
+
+        .enlace-web {
+            position: absolute; bottom: calc(72px + env(safe-area-inset-bottom)); 
+            color: white; text-decoration: none; font-weight: bold; font-size: 0.8rem;
+            z-index: 20;
+        }
+
+        .banner-politico {
+            position: absolute; bottom: 0; width: 100%; height: calc(68px + env(safe-area-inset-bottom)); 
+            background-image: url('banner.jpeg'); background-size: contain; 
+            background-position: center top; background-repeat: no-repeat;
+            background-color: #F37021; border-top: 1px solid white;
+        }
+
+        button { 
+            width: 85%; max-width: 300px; padding: 12px; margin: 4px 0; 
+            background-color: var(--color-primario); color: white; 
+            font-size: 1rem; font-weight: 700; border: 2px solid white; 
+            border-radius: 12px; text-transform: uppercase;
+        }
+
+        #btn-guia {
+            background: white; color: var(--color-primario);
+            font-size: 0.75rem; padding: 5px 15px; width: auto; margin-bottom: 10px;
+            user-select: none; -webkit-user-select: none; opacity: 0.5;
+        }
+
+        #mensaje-victoria {
+            display: none; position: fixed; top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); background: white; 
+            border: 5px solid var(--color-primario); padding: 25px; 
+            border-radius: 20px; z-index: 2000; text-align: center; 
+            width: 80%; max-width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body onclick="iniciarMusica()">
+
+    <audio id="musicaFondo" loop><source src="Version 2 Final.mp3" type="audio/mpeg"></audio>
+
+    <div id="mensaje-victoria">
+        <h2 id="titulo-victoria">✨ ¡IMAGEN COMPLETADA! ✨</h2>
+        <p>Colombia gana con Leonidas Name</p>
+        <button onclick="proximoNivel()">Siguiente Imagen</button>
+    </div>
+
+    <div id="pantalla-carga" class="pantalla">
+        <p class="texto-carga-inferior">CARGANDO EL RETO...</p>
+    </div>
+
+    <div id="pantalla-menu" class="pantalla" style="display: none;">
+        <div class="cabecera-titulo"><h1 class="texto-sombra">PUZZLE44</h1></div>
+        <div style="position: absolute; bottom: calc(115px + env(safe-area-inset-bottom)); width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <button onclick="iniciarJuego()">Iniciar Juego</button>
+        </div>
+        <a href="https://www.leonidasnamegomez.com" target="_blank" class="enlace-web">www.leonidasnamegomez.com</a>
+        <div class="banner-politico"></div>
+    </div>
+
+    <div id="pantalla-juego" class="pantalla" style="display: none;">
+        <div class="cabecera-titulo"><h1 class="texto-sombra">PUZZLE44</h1></div>
+        <div class="instrucciones-juego">
+            <strong>REGLAS:</strong> Desliza las piezas hasta formar la imagen. La esquina inferior derecha queda libre.
+        </div>
+
+        <div class="area-juego">
+            <button id="btn-guia" onmousedown="controlGuia(true)" onmouseup="controlGuia(false)" onmouseleave="controlGuia(false)" ontouchstart="controlGuia(true)" ontouchend="controlGuia(false)">VER GUÍA 👁️</button>
+            
+            <div id="contenedor-puzzle">
+                <div id="guia-imagen"></div>
+            </div>
+            
+            <div style="display:flex; flex-direction: column; align-items: center; width:100%; margin-top: 15px;">
+                <div style="display:flex; gap:10px; width:90%; justify-content:center;">
+                    <button onclick="location.reload()" style="width:48%; font-size: 0.85rem; padding: 8px;">Menú</button>
+                    <button onclick="reiniciarJuego()" style="width:48%; font-size: 0.85rem; padding: 8px;">Reiniciar</button>
+                </div>
+                <button onclick="compartirJuego()" style="width:90%; margin-top: 8px; font-size: 0.85rem; padding: 10px;">COMPARTIR JUEGO</button>
+            </div>
+        </div>
+
+        <a href="https://www.leonidasnamegomez.com" target="_blank" class="enlace-web">www.leonidasnamegomez.com</a>
+        <div class="banner-politico"></div>
+    </div>
+
+    <script>
+        const size = 4;
+        const listaImagenes = ['pareja1.jpg', 'pareja2.jpg', 'pareja3.jpg', 'pareja4.jpg'];
+        let indiceImagenActual = 0;
+        let piezas = [];
+        let enPreparacion = true; 
+        let musicaIniciada = false;
+
+        function iniciarMusica() { if (!musicaIniciada) { document.getElementById('musicaFondo').play().catch(() => {}); musicaIniciada = true; } }
+
+        function iniciarJuego() {
+            indiceImagenActual = 0;
+            document.getElementById('pantalla-menu').style.display = 'none';
+            document.getElementById('pantalla-juego').style.display = 'flex';
+            prepararTablero();
+        }
+
+        function proximoNivel() {
+            indiceImagenActual = (indiceImagenActual + 1) % listaImagenes.length;
+            document.getElementById('mensaje-victoria').style.display = 'none';
+            prepararTablero();
+        }
+
+        function reiniciarJuego() {
+            document.getElementById('mensaje-victoria').style.display = 'none';
+            prepararTablero();
+        }
+
+        function controlGuia(mostrar) { 
+            if(!enPreparacion) {
+                document.getElementById('guia-imagen').style.display = mostrar ? 'block' : 'none';
+            }
+        }
+
+        function prepararTablero() {
+            enPreparacion = true;
+            const guia = document.getElementById('guia-imagen');
+            const btn = document.getElementById('btn-guia');
+            const imgActual = listaImagenes[indiceImagenActual];
+            
+            guia.style.backgroundImage = `url('${imgActual}')`;
+            guia.style.display = 'block'; 
+            btn.style.opacity = "0.5";
+
+            piezas = Array.from({length: size * size}, (_, i) => i);
+            renderizarPuzzle();
+
+            setTimeout(() => {
+                guia.style.display = 'none'; 
+                mezclar(piezas);
+                renderizarPuzzle();
+                enPreparacion = false; 
+                btn.style.opacity = "1";
+            }, 3000);
+        }
+
+        function mezclar(array) {
+            do {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            } while (!esResoluble(array) || estaResuelto(array));
+        }
+
+        function esResoluble(a) {
+            let inversions = 0;
+            const posVacia = a.indexOf(15);
+            for (let i = 0; i < a.length; i++) {
+                if (a[i] === 15) continue;
+                for (let j = i + 1; j < a.length; j++) {
+                    if (a[j] !== 15 && a[i] > a[j]) inversions++;
+                }
+            }
+            const filaVaciaDesdeAbajo = 4 - Math.floor(posVacia / 4);
+            return (filaVaciaDesdeAbajo % 2 === 0) !== (inversions % 2 === 0);
+        }
+
+        function estaResuelto(a) { return a.every((p, i) => p === i); }
+
+        function renderizarPuzzle() {
+            const contenedor = document.getElementById('contenedor-puzzle');
+            const guiaExistente = document.getElementById('guia-imagen');
+            contenedor.innerHTML = '';
+            contenedor.appendChild(guiaExistente);
+            
+            const imgActual = listaImagenes[indiceImagenActual];
+
+            piezas.forEach((p, i) => {
+                const div = document.createElement('div');
+                div.className = 'pieza' + (p === 15 ? ' vacia' : '');
+                if (p !== 15) {
+                    div.style.backgroundImage = `url('${imgActual}')`;
+                    const x = (p % size) * 33.333;
+                    const y = Math.floor(p / size) * 33.333;
+                    div.style.backgroundPosition = `${x}% ${y}%`;
+                }
+                div.onclick = () => mover(i);
+                contenedor.appendChild(div);
+            });
+        }
+
+        function mover(index) {
+            if(enPreparacion) return;
+            const vacio = piezas.indexOf(15);
+            const filaActual = Math.floor(index / size);
+            const colActual = index % size;
+            const filaVacia = Math.floor(vacio / size);
+            const colVacia = vacio % size;
+
+            if (Math.abs(filaActual - filaVacia) + Math.abs(colActual - colVacia) === 1) {
+                [piezas[index], piezas[vacio]] = [piezas[vacio], piezas[index]];
+                renderizarPuzzle();
+                verificarVictoria();
+            }
+        }
+
+        function verificarVictoria() {
+            if (estaResuelto(piezas)) {
+                setTimeout(() => { document.getElementById('mensaje-victoria').style.display = 'block'; }, 300);
+            }
+        }
+
+        function compartirJuego() {
+            const url = window.location.href;
+            if (navigator.share) navigator.share({ title: 'PUZZLE44', url: url });
+            else { navigator.clipboard.writeText(url); alert("¡Enlace copiado!"); }
+        }
+
+        setTimeout(() => {
+            document.getElementById('pantalla-carga').style.display = 'none';
+            document.getElementById('pantalla-menu').style.display = 'flex';
+        }, 3000);
+    </script>
+</body>
+</html>
