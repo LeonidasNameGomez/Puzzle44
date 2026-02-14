@@ -14,12 +14,13 @@
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1634052474293396');
+    fbq('init', '944752851835894');
     fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=1634052474293396&ev=PageView&noscript=1"
+    src="https://www.facebook.com/tr?id=944752851835894&ev=PageView&noscript=1"
     /></noscript>
+
     <meta property="og:title" content="PUZZLE44 - El Rompecabezas">
     <meta property="og:description" content="Ordena las piezas y completa el reto">
     <meta property="og:image" content="https://leonidasnamegomez.github.io/Puzzle44/miniatura.jpg">
@@ -68,7 +69,6 @@
             font-weight: 800; color: white; margin: 0; font-size: 1.8rem;
         }
 
-        /* MODAL DE REGLAS */
         .modal-reglas {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85); z-index: 3000; align-items: center; justify-content: center;
@@ -141,7 +141,7 @@
             display: none; position: fixed; top: 50%; left: 50%; 
             transform: translate(-50%, -50%); background: white; 
             border: 5px solid var(--color-primario); padding: 25px; 
-            border-radius: 20px; z-index: 2000; text-align: center; 
+            border-radius: 20px; z-index: 4000; text-align: center; 
             width: 80%; max-width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
     </style>
@@ -161,9 +161,11 @@
     </div>
 
     <div id="mensaje-victoria">
-        <h2 id="titulo-victoria">✨ ¡IMAGEN COMPLETADA! ✨</h2>
-        <p>Colombia gana con Leonidas Name</p>
-        <button onclick="proximoNivel()">Siguiente Imagen</button>
+        <h2 style="color: var(--color-primario); margin-top: 0;">✨ ¡Felicitaciones! ✨</h2>
+        <p>Has completado el reto.</p>
+        <p style="font-weight: bold; font-size: 0.95rem;">Recuerda el próximo 8 de marzo votar por el Frente Amplio Unitario #44</p>
+        <button onclick="proximoNivel()" style="margin-top: 10px;">JUGAR DE NUEVO</button>
+        <button onclick="compartirJuego()" style="margin-top: 8px;">COMPARTIR JUEGO</button>
     </div>
 
     <div id="pantalla-carga" class="pantalla">
