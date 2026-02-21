@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>PUZZLE44 - Leonidas Name</title>
 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q6PLBZ5TGV"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Q6PLBZ5TGV');
+    </script>
+
     <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -154,7 +162,7 @@
         <div class="contenido-modal">
             <h3>🧩 REGLAS DE PUZZLE44</h3>
             <p>1. El cuadro blanco es tu espacio libre para mover.<br><br>
-               2. Toca la pieza que este continua al cuadro blanco que quieres mover.<br><br>
+               2. Toca la pieza que esté continua al cuadro blanco que quieres mover.<br><br>
                3. Mantén presionado el botón de vista para ver la guía o imagen a formar.</p>
             <button onclick="cerrarReglas()" style="width: 100%;">¡ENTENDIDO!</button>
         </div>
@@ -221,6 +229,9 @@
         }
 
         function cerrarReglas() {
+            // EVENTO ANALYTICS: Juego Iniciado
+            gtag('event', 'juego_iniciado', { 'nombre_juego': 'Puzzle44' });
+
             document.getElementById('modal-reglas').style.display = 'none';
             iniciarJuego();
         }
@@ -332,11 +343,17 @@
 
         function verificarVictoria() {
             if (estaResuelto(piezas)) {
+                // EVENTO ANALYTICS: Victoria
+                gtag('event', 'puzzle_completado', { 'nombre_juego': 'Puzzle44', 'imagen': listaImagenes[indiceImagenActual] });
+
                 setTimeout(() => { document.getElementById('mensaje-victoria').style.display = 'block'; }, 300);
             }
         }
 
         function compartirJuego() {
+            // EVENTO ANALYTICS: Compartir
+            gtag('event', 'share', { 'method': 'Web Share', 'content_type': 'Juego Puzzle44' });
+
             const url = "https://leonidasnamegomez.github.io/Puzzle44/";
             if (navigator.share) {
                 navigator.share({ title: 'PUZZLE44', text: '¡Completa el rompecabezas de Leonidas Name!', url: url }).catch(() => {});
