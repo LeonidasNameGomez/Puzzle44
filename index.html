@@ -104,9 +104,19 @@
             width: 100%; height: 100%; background-size: 400% 400%;
             cursor: pointer; border: 0.5px solid rgba(255,255,255,0.1);
             box-sizing: border-box;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        .pieza.vacia { background: #FFFFFF !important; cursor: default; border: none; }
+        .pieza.vacia { 
+            background: #FFFFFF !important; 
+            cursor: default; 
+            border: none;
+            color: var(--color-primario);
+            font-weight: 900;
+            font-size: 0.8rem;
+            text-align: center;
+            text-transform: uppercase;
+        }
 
         #guia-imagen {
             position: absolute; width: 100%; height: 100%;
@@ -229,9 +239,7 @@
         }
 
         function cerrarReglas() {
-            // EVENTO ANALYTICS: Juego Iniciado
             gtag('event', 'juego_iniciado', { 'nombre_juego': 'Puzzle44' });
-
             document.getElementById('modal-reglas').style.display = 'none';
             iniciarJuego();
         }
@@ -315,12 +323,17 @@
             piezas.forEach((p, i) => {
                 const div = document.createElement('div');
                 div.className = 'pieza' + (p === 15 ? ' vacia' : '');
+                
                 if (p !== 15) {
                     div.style.backgroundImage = `url('${imgActual}')`;
                     const x = (p % size) * 33.333;
                     const y = Math.floor(p / size) * 33.333;
                     div.style.backgroundPosition = `${x}% ${y}%`;
+                } else {
+                    // AQUI ESTÁ EL AJUSTE: Se añade el texto al cuadro vacío
+                    div.innerText = "Espacio Libre";
                 }
+                
                 div.onclick = () => mover(i);
                 contenedor.appendChild(div);
             });
@@ -343,17 +356,13 @@
 
         function verificarVictoria() {
             if (estaResuelto(piezas)) {
-                // EVENTO ANALYTICS: Victoria
                 gtag('event', 'puzzle_completado', { 'nombre_juego': 'Puzzle44', 'imagen': listaImagenes[indiceImagenActual] });
-
                 setTimeout(() => { document.getElementById('mensaje-victoria').style.display = 'block'; }, 300);
             }
         }
 
         function compartirJuego() {
-            // EVENTO ANALYTICS: Compartir
             gtag('event', 'share', { 'method': 'Web Share', 'content_type': 'Juego Puzzle44' });
-
             const url = "https://leonidasnamegomez.github.io/Puzzle44/";
             if (navigator.share) {
                 navigator.share({ title: 'PUZZLE44', text: '¡Completa el rompecabezas de Leonidas Name!', url: url }).catch(() => {});
